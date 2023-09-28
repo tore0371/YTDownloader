@@ -1,6 +1,7 @@
+from pytube import YouTube
+
 import os
 import time
-from pytube import YouTube 
 
 
 dirPath = os.path.dirname(os.path.abspath(__file__))
@@ -21,32 +22,24 @@ def createDownloadsFolderIfNotExists():
             return path
         except OSError as exc:
             raise
+    else:
+        return path
 
 
-def download(urlFiles, downloadsPath):
+def Download(links, downloadPath):
     print("Starting downloads")
-    for url in urlFiles:
+    for link in links:
+        print("URL --> " + link)
+        youtubeObject = YouTube(link)
+        youtubeObject = youtubeObject.streams.get_highest_resolution()
         try:
-            yt = YouTube(url)
-            video_stream = yt.streams.get_highest_resolution()
-            print(f"Descargando: {yt.title}")
-            video_stream.download(downloadsPath)
-            print("Descarga completada.")
-            time.sleep(5)
-        except Exception as e:
-            print(f"Error: {str(e)}")
-            time.sleep(5)
+            youtubeObject.download(output_path=downloadsPath)
+        except:
+            print("An error has occurred")
+        print("Download is completed successfully")
 
 
-def main():
-    file = open('urls.txt')
-    urlFiles = readFile(file)
-    downloadsPath = createDownloadsFolderIfNotExists()
-    download(urlFiles, downloadsPath)
-
-
-    
-    
-
-
-main()
+file = open('urls.txt')
+urlFiles = readFile(file)
+downloadsPath = createDownloadsFolderIfNotExists()
+Download(urlFiles, downloadsPath)
